@@ -1,0 +1,39 @@
+{
+  "name": "agentos",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Agent OS, 你的个人AI团队协作操作系统",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm start",
+    "start": "tsx watch --include .env --include \"config/*.json\" src/index.ts",
+    "start:once": "tsx src/index.ts",
+    "start:prod": "node dist/index.js",
+    "agent-os": "tsx src/deploy-cli.ts",
+    "probe": "tsx src/probe-lark.ts",
+    "build": "tsc",
+    "probe:cli": "tsx src/probe-cli.ts",
+    "probe:tool": "tsx src/probe-app-tool.ts",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.71.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cac": "^6.7.14",
+    "croner": "^10.0.1",
+    "dotenv": "^17.4.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
