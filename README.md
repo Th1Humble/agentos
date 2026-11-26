@@ -1,8 +1,8 @@
 # Agent OS
 
-把飞书话题群变成你的个人 AI 团队协作指挥台。
+把飞书话题群变成你的个人 **AI 数字员工团队（电子同事）**协作指挥台。
 
-**Agent OS** 是一个基于 Node.js + TypeScript 的多角色 AI 调度系统：它在本地通过飞书 WebSocket 长连接接入多个角色机器人，统一驱动本机的 **Claude Code** 与 **Codex CLI** 执行研发、文档与运维任务，并在关键节点通过飞书交互卡片实现「人在回路（Human-in-the-Loop）」协作。
+**Agent OS** 是一个基于 Node.js + TypeScript 的多角色 AI 调度系统：它在本地通过飞书 WebSocket 长连接接入多个具备独立岗位身份的数字员工机器人（如 CEO 助理、产品、开发、审查、测试），统一驱动本机的 **Claude Code** 与 **Codex CLI** 像真实研发团队一样互相 `@` 派活、写文档、改代码、跑验证与定时巡检，并在关键节点通过飞书交互卡片实现「人在回路（Human-in-the-Loop）」协作。
 
 > 📖 **想结合源码深入学习或回顾架构？** 仓库内置了 8 章节的 **Docsify 源码学习手册**（在线阅读：[th1humble.github.io/agentos](https://th1humble.github.io/agentos/) · 源码目录：[`docs/`](docs/README.md)）：
 > - 本地预览：`python3 -m http.server -d docs 3000`（访问 `http://localhost:3000`）
