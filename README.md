@@ -4,7 +4,7 @@
 
 **Agent OS** 是一个基于 Node.js + TypeScript 的多角色 AI 调度系统：它在本地通过飞书 WebSocket 长连接接入多个角色机器人，统一驱动本机的 **Claude Code** 与 **Codex CLI** 执行研发、文档与运维任务，并在关键节点通过飞书交互卡片实现「人在回路（Human-in-the-Loop）」协作。
 
-> 📖 **想结合源码深入学习或回顾架构？** 仓库内置了 8 章节的 **Docsify 源码学习手册**（位于 [`docs/`](docs/README.md)），支持本地预览及直接通过 GitHub Pages 发布：
+> 📖 **想结合源码深入学习或回顾架构？** 仓库内置了 8 章节的 **Docsify 源码学习手册**（在线阅读：[th1humble.github.io/agentos](https://th1humble.github.io/agentos/) · 源码目录：[`docs/`](docs/README.md)）：
 > - 本地预览：`python3 -m http.server -d docs 3000`（访问 `http://localhost:3000`）
 > - 在线发布：在仓库 `Settings → Pages → Build and deployment` 选择 **Deploy from a branch** → **`main`** → **`/docs`** 即可自动上线。
 
@@ -25,6 +25,8 @@
 - 指定一名 `teamLeader`（默认 `ceo-assistant`）负责理解目标、调用 `dispatch_task` 将任务确定性派发给其他成员，并汇总团队最终结论。
 - 协作派单自动携带工作目录、任务发起人与轮次上限（`collaborationMaxRounds`，默认 16 轮），防止无限循环或跨项目串味。
 
+![多角色协作双通道编排图](docs/assets/multi-agent-collaboration.svg)
+
 ### 2. 双 AI CLI 引擎适配
 - 原生适配 **Claude Code**（`claude`）与 **Codex**（`codex`），统一流式解析工具调用、思考进度、Token 统计与最终结果。
 - 支持为每个角色配置 `defaultCli`，也可在新话题中通过 `/claude <任务>` 或 `/codex <任务>` 临时指定引擎。
@@ -36,6 +38,8 @@
 - **需求澄清卡片**（`request_clarification`）：支持一次最多 5 个问题（每题 2~4 个选项，亦支持自由回复），收集答案后自动续接执行。
 - **产品方案确认卡片**（`request_spec_approval`）：支持本地 Markdown（`spec.md` + `issues`）或飞书云文档（`lark-doc`）两种唯一权威产物模式；支持监听飞书云文档评论（`drive.notice.comment_add_v1`）按评论自动修订方案；用户点击确认后自动回传给 Team Leader 推进开发。
 - **高危操作审批卡片**（`request_approval`）：涉及重启服务、删文件、写库等高危操作时展示操作详情、影响范围与回滚方案，默认 300 秒超时自动拒绝（服务重启后自动恢复计时）。
+
+![人在回路状态流转与卡片续接全景图](docs/assets/human-in-the-loop-state.svg)
 
 ### 4. 话题级工作目录管理
 - 新话题默认**不绑定项目目录**，可直接讨论需求；进入具体项目前再由对话指定（模型调用 `select_workspace`）或通过 `/cd <目录>` 绑定。
@@ -211,6 +215,8 @@ OS 根目录由程序文件位置自动确定，与启动时的当前工作目�
 - **共享与隔离**：同一群同一话题内所有角色共享目录，协作任务自动继承目录；切换目录会清除该话题下各角色的 CLI 会话绑定（保留有限文字交接），避免旧上下文污染。
 - **忙碌保护**：同话题内任一成员正在执行，或存在待处理审批、产品确认、澄清时，禁止切换目录；请先处理完或另开话题。
 - **已弃用配置**：旧 `bots[].workspace`、`CLI_WORKDIR`、`CLAUDE_WORKDIR` 已弃用，不再为新话题设置默认目录。历史会话若存在目录冲突或缺少有效绝对路径，启动时会自动转为未绑定状态并使相关未处理审批/方案失效。
+
+![飞书话题会话与工作目录绑定流程图](docs/assets/session-workspace-flow.svg)
 
 ### 内置 MCP 工具（供模型调用）
 
