@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 500" width="1060" height="500" role="img" aria-label="定时任务调度与热加载全链路图">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+      .title { font-size: 19px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12.5px; fill: #64748b; }
+      .box-title { font-size: 13.5px; font-weight: 700; fill: #0f172a; }
+      .box-sub { font-size: 11.5px; fill: #475569; }
+      .pill { font-size: 11px; font-weight: 700; }
+      .step { font-size: 11.5px; font-weight: 600; fill: #334155; }
+    </style>
+    <filter id="sh6" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="ar6-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <marker id="ar6-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="ar6-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <rect width="1060" height="500" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1058" height="498" rx="15" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <text x="32" y="38" class="font title">定时任务子系统：3 种管理入口 → 调度引擎 → 到点直接执行</text>
+  <text x="32" y="60" class="font sub">创建时自动快照当前话题 workspaceDir；支持自然语言、本地 HTTP API、直接改 schedules.json 热加载三种方式管理</text>
+
+  <!-- Left Column: 3 Management Entrypoints -->
+  <g filter="url(#sh6)">
+    <rect x="34" y="92" width="286" height="106" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.4"/>
+    <rect x="48" y="104" width="166" height="20" rx="5" fill="#dbeafe"/>
+    <text x="56" y="118" class="font pill" fill="#1d4ed8">入口 1 · 飞书自然语言</text>
+    <text x="48" y="144" class="mono box-title">/schedule 每天9点巡检日志</text>
+    <text x="48" y="164" class="font box-sub">CLI 调 MCP schedule_manage(action=add)</text>
+    <text x="48" y="182" class="font box-sub">MCP POST → 127.0.0.1:3101/api/schedules/manage</text>
+  </g>
+
+  <g filter="url(#sh6)">
+    <rect x="34" y="216" width="286" height="102" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <rect x="48" y="228" width="176" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="56" y="242" class="font pill" fill="#334155">入口 2 · 斜杠命令 / HTTP API</text>
+    <text x="48" y="268" class="mono box-title">/schedules · pause · resume · run</text>
+    <text x="48" y="288" class="font box-sub">或外部脚本直接调 127.0.0.1:3101/api/schedules</text>
+    <text x="48" y="305" class="font box-sub">支持可选请求头 x-api-token 鉴权</text>
+  </g>
+
+  <g filter="url(#sh6)">
+    <rect x="34" y="336" width="286" height="102" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.4"/>
+    <rect x="48" y="348" width="176" height="20" rx="5" fill="#fef3c7"/>
+    <text x="56" y="362" class="font pill" fill="#92400e">入口 3 · 直接改磁盘文件</text>
+    <text x="48" y="388" class="mono box-title">data/schedules.json</text>
+    <text x="48" y="408" class="font box-sub">schedule-watcher.ts 监听文件变更并防抖</text>
+    <text x="48" y="425" class="font box-sub">reconcileScheduleFile() 差异对账热加载</text>
+  </g>
+
+  <!-- Center: Scheduler Engine -->
+  <g filter="url(#sh6)">
+    <rect x="394" y="110" width="284" height="312" rx="12" fill="#ffffff" stroke="#f59e0b" stroke-width="1.6"/>
+    <rect x="410" y="124" width="144" height="22" rx="6" fill="#fef3c7"/>
+    <text x="420" y="139" class="font pill" fill="#92400e">Scheduler 调度引擎</text>
+    <text x="410" y="168" class="mono box-sub">src/app/scheduler.ts (croner)</text>
+
+    <rect x="410" y="182" width="252" height="74" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="422" y="202" class="font pill" fill="#1e293b">3 种调度规则</text>
+    <text x="422" y="220" class="mono box-sub">• once: ISO runAt (过期自动 skipped)</text>
+    <text x="422" y="236" class="mono box-sub">• interval: 1分钟 ~ 24小时</text>
+    <text x="422" y="250" class="mono box-sub">• cron: 表达式 + Asia/Shanghai</text>
+
+    <rect x="410" y="268" width="252" height="68" rx="8" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="422" y="288" class="font pill" fill="#065f46">启动保护 &amp; 持久化</text>
+    <text x="422" y="306" class="font box-sub">• 崩溃遗留运行记录标为中断</text>
+    <text x="422" y="324" class="font box-sub">• 缺少 workspaceDir 的旧计划自动暂停</text>
+
+    <rect x="410" y="348" width="252" height="58" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="422" y="368" class="font pill" fill="#1d4ed8">双文件落盘</text>
+    <text x="422" y="386" class="mono box-sub">schedules.json · schedule-runs.json</text>
+  </g>
+
+  <!-- Right: Direct Execution Runner -->
+  <g filter="url(#sh6)">
+    <rect x="748" y="110" width="278" height="312" rx="12" fill="#ecfdf5" stroke="#34d399" stroke-width="1.6"/>
+    <rect x="764" y="124" width="166" height="22" rx="6" fill="#d1fae5"/>
+    <text x="774" y="139" class="font pill" fill="#065f46">到点执行器（直接模式）</text>
+    <text x="764" y="168" class="mono box-sub">scheduled-task-runner.ts</text>
+
+    <text x="764" y="198" class="font box-sub">① 使用虚拟话题地址解析会话：</text>
+    <text x="764" y="216" class="mono box-sub" fill="#047857">   threadId = "scheduled-&lt;id&gt;"</text>
+
+    <text x="764" y="244" class="font box-sub">② 绑定计划快照的 workspaceDir</text>
+    <text x="764" y="262" class="font box-sub">   不受原话题后续 /cd 切换影响</text>
+
+    <text x="764" y="290" class="font box-sub">③ 调用 runCli() 直接执行任务</text>
+
+    <rect x="764" y="314" width="246" height="92" rx="8" fill="#fff1f2" stroke="#fda4af"/>
+    <text x="776" y="336" class="font pill" fill="#be123c">⚠ 重要边界约束</text>
+    <text x="776" y="356" class="font box-sub">不支持中途请求审批、澄清、</text>
+    <text x="776" y="373" class="font box-sub">产品确认、切目录或团队派发；</text>
+    <text x="776" y="390" class="font box-sub">遇到即抛错记为失败，绝不误报成功</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 320 145 L 358 145 L 358 210 L 392 210" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#ar6-blue)"/>
+  <line x1="320" y1="267" x2="392" y2="267" stroke="#2563eb" stroke-width="2" marker-end="url(#ar6-blue)"/>
+  <path d="M 320 387 L 358 387 L 358 320 L 392 320" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#ar6-amber)"/>
+
+  <line x1="678" y1="266" x2="746" y2="266" stroke="#059669" stroke-width="2.4" marker-end="url(#ar6-emerald)"/>
+  <text x="688" y="256" class="font step" fill="#047857">到点触发</text>
+</svg>

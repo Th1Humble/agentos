@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 560" width="1060" height="560" role="img" aria-label="人在回路状态流转与卡片续接全景图">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+      .title { font-size: 19px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12.5px; fill: #64748b; }
+      .card-title { font-size: 13.5px; font-weight: 700; fill: #0f172a; }
+      .card-text { font-size: 11.5px; fill: #475569; }
+      .pill { font-size: 11px; font-weight: 700; }
+    </style>
+    <filter id="sh" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="ar-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <rect width="1060" height="560" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1058" height="558" rx="15" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <text x="32" y="38" class="font title">人在回路（Human-in-the-Loop）统一路由与闭环续接</text>
+  <text x="32" y="60" class="font sub">首轮消息与卡片续接共用 handleTaskResult()，支持“审批 → 澄清 → 提交方案 → 团队派发”任意深度链式流转</text>
+
+  <!-- Entry Box -->
+  <g filter="url(#sh)">
+    <rect x="34" y="216" width="174" height="128" rx="12" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="121" y="246" text-anchor="middle" class="font card-title" fill="#1e3a8a">统一结果路由器</text>
+    <text x="121" y="266" text-anchor="middle" class="mono card-text" fill="#1d4ed8">handleTaskResult()</text>
+    <text x="121" y="290" text-anchor="middle" class="font card-text">• 保存 cliSessionId</text>
+    <text x="121" y="309" text-anchor="middle" class="font card-text">• 检查 toolCalls</text>
+    <text x="121" y="328" text-anchor="middle" class="font card-text">• 禁单轮多交互</text>
+  </g>
+
+  <!-- 4 Branches -->
+  <!-- Branch 1: Clarification -->
+  <g filter="url(#sh)">
+    <rect x="276" y="88" width="276" height="98" rx="10" fill="#ffffff" stroke="#818cf8" stroke-width="1.4"/>
+    <rect x="290" y="99" width="142" height="20" rx="5" fill="#e0e7ff"/>
+    <text x="298" y="113" class="mono pill" fill="#3730a3">request_clarification</text>
+    <text x="444" y="113" class="font card-text" fill="#b45309">内存态</text>
+    <text x="290" y="138" class="font card-title">1. 需求澄清问答卡</text>
+    <text x="290" y="157" class="font card-text">• 最多 5 题，支持单选 / 自定义 / 采纳推荐</text>
+    <text x="290" y="174" class="font card-text">• 也支持直接在话题发文字覆盖旧卡</text>
+  </g>
+
+  <!-- Branch 2: Approval -->
+  <g filter="url(#sh)">
+    <rect x="276" y="202" width="276" height="98" rx="10" fill="#ffffff" stroke="#f59e0b" stroke-width="1.4"/>
+    <rect x="290" y="213" width="124" height="20" rx="5" fill="#fef3c7"/>
+    <text x="298" y="227" class="mono pill" fill="#92400e">request_approval</text>
+    <text x="428" y="227" class="font card-text" fill="#047857">JSON 持久化</text>
+    <text x="290" y="252" class="font card-title">2. 高危操作审批卡</text>
+    <text x="290" y="271" class="font card-text">• 展示操作、详情、影响范围与回滚方案</text>
+    <text x="290" y="288" class="font card-text">• 默认 300s 超时自动拒绝，重启恢复计时</text>
+  </g>
+
+  <!-- Branch 3: Product Spec -->
+  <g filter="url(#sh)">
+    <rect x="276" y="316" width="276" height="114" rx="10" fill="#ffffff" stroke="#10b981" stroke-width="1.4"/>
+    <rect x="290" y="327" width="154" height="20" rx="5" fill="#d1fae5"/>
+    <text x="298" y="341" class="mono pill" fill="#065f46">request_spec_approval</text>
+    <text x="456" y="341" class="font card-text" fill="#047857">JSON 持久化</text>
+    <text x="290" y="366" class="font card-title">3. 产品方案确认卡</text>
+    <text x="290" y="385" class="font card-text">• local（校验文件存在）或 lark-doc 云文档</text>
+    <text x="290" y="402" class="font card-text">• 确认前支持云文档评论 @Bot 串行修订</text>
+    <text x="290" y="419" class="font card-text">• 确认后若属协作任务，自动交回 Team Leader</text>
+  </g>
+
+  <!-- Branch 4: Normal Done / Dispatch -->
+  <g filter="url(#sh)">
+    <rect x="276" y="446" width="276" height="86" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+    <rect x="290" y="457" width="160" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="298" y="471" class="mono pill" fill="#334155">dispatch_task / 无交互</text>
+    <text x="290" y="496" class="font card-title">4. 团队派单 或 正常收尾</text>
+    <text x="290" y="515" class="font card-text">• 派单交由 CollaborationService；完成则拆长文通知</text>
+  </g>
+
+  <!-- Right Column: Card Callback & Continuation -->
+  <g filter="url(#sh)">
+    <rect x="628" y="138" width="206" height="134" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+    <text x="644" y="166" class="font card-title">飞书卡片回调处理</text>
+    <text x="644" y="185" class="mono card-text">card-action-handler.ts</text>
+    <text x="644" y="209" class="font card-text">1. 校验任务发起人权限</text>
+    <text x="644" y="228" class="font card-text">2. 锁定 Session = active</text>
+    <text x="644" y="247" class="font card-text">3. queueMicrotask 异步续接</text>
+    <text x="644" y="264" class="font card-text">   立即返回 Toast 防超时</text>
+  </g>
+
+  <g filter="url(#sh)">
+    <rect x="866" y="138" width="162" height="134" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="947" y="168" text-anchor="middle" class="font card-title" fill="#1e3a8a">统一续接执行</text>
+    <text x="947" y="187" text-anchor="middle" class="mono card-text" fill="#1d4ed8">continueTask()</text>
+    <text x="947" y="212" text-anchor="middle" class="font card-text">发新进度卡</text>
+    <text x="947" y="231" text-anchor="middle" class="font card-text">resume 原会话</text>
+    <text x="947" y="250" text-anchor="middle" class="font card-text">异常保证释放 idle</text>
+  </g>
+
+  <!-- Doc Comment Box -->
+  <g filter="url(#sh)">
+    <rect x="628" y="324" width="400" height="98" rx="12" fill="#ecfdf5" stroke="#34d399" stroke-width="1.4"/>
+    <text x="644" y="350" class="font card-title" fill="#065f46">云文档评论自动修订旁路（lark-drive）</text>
+    <text x="644" y="370" class="mono card-text" fill="#047857">scheduleDocumentComment() → runProductDocumentComment()</text>
+    <text x="644" y="392" class="font card-text">• 按 session 串行队列执行，加/删 Typing 表情，写回评论说明</text>
+    <text x="644" y="410" class="font card-text">• 原待确认卡持续有效，直到发起人点击「确认方案」交回团队</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 208 256 L 242 256 L 242 138 L 274 138" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 208 272 L 274 272" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 208 292 L 242 292 L 242 372 L 274 372" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 208 314 L 228 314 L 228 490 L 274 490" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Branches -> Card Action -->
+  <path d="M 552 138 L 590 138 L 590 185 L 626 185" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 552 250 L 590 250 L 590 220 L 626 220" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Spec -> Doc Comment -->
+  <line x1="552" y1="372" x2="626" y2="372" stroke="#059669" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Card Action -> continueTask -->
+  <line x1="834" y1="205" x2="864" y2="205" stroke="#2563eb" stroke-width="2.2" marker-end="url(#ar-blue)"/>
+
+  <!-- Loop back from continueTask to handleTaskResult -->
+  <path d="M 947 138 L 947 74 L 121 74 L 121 214" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-dasharray="6,4" marker-end="url(#ar-blue)"/>
+  <rect x="442" y="62" width="236" height="22" rx="11" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="560" y="77" text-anchor="middle" class="font pill" fill="#1e40af">续接结果再次回到 handleTaskResult() 闭环</text>
+</svg>

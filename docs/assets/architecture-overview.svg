@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 620" width="1080" height="620" role="img" aria-label="Agent OS 整体架构图">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+      .title { font-size: 20px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-size: 13px; fill: #64748b; }
+      .box-title { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .box-sub { font-size: 11.5px; fill: #475569; }
+      .badge { font-size: 11px; font-weight: 600; }
+      .arrow-label { font-size: 11px; font-weight: 600; fill: #334155; }
+      .layer-label { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; fill: #64748b; }
+    </style>
+    <filter id="shadow" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1080" height="620" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1078" height="618" rx="15" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <text x="36" y="42" class="font title">Agent OS 整体系统架构</text>
+  <text x="36" y="64" class="font subtitle">飞书作为多角色控制面 · 本地 Node.js 调度内核 · Claude Code / Codex 作为执行面 · stdio MCP 充当系统调用</text>
+
+  <!-- Column 1: Feishu Control Plane -->
+  <rect x="32" y="88" width="215" height="498" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+  <text x="48" y="112" class="font layer-label" fill="#1d4ed8">CONTROL PLANE · 飞书</text>
+
+  <g filter="url(#shadow)">
+    <rect x="48" y="130" width="183" height="92" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <text x="64" y="156" class="font box-title">飞书话题群</text>
+    <text x="64" y="177" class="font box-sub">• 一个话题 = 一个任务</text>
+    <text x="64" y="195" class="font box-sub">• 多 Bot 互相 @ 协作</text>
+    <text x="64" y="213" class="font box-sub">• 斜杠命令 / 附件图片</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="48" y="242" width="183" height="106" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <text x="64" y="268" class="font box-title">交互式业务卡片</text>
+    <text x="64" y="289" class="font box-sub">• 实时进度与停止按钮</text>
+    <text x="64" y="307" class="font box-sub">• 需求澄清问答卡</text>
+    <text x="64" y="325" class="font box-sub">• 产品方案确认 &amp; 审批卡</text>
+    <text x="64" y="341" class="font box-sub">• /resume 历史会话切换</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="48" y="368" width="183" height="84" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <text x="64" y="394" class="font box-title">飞书云文档评论</text>
+    <text x="64" y="415" class="font box-sub">• 划词评论 @产品Bot</text>
+    <text x="64" y="433" class="font box-sub">• 自动贴 Typing 并修订</text>
+  </g>
+
+  <rect x="48" y="474" width="183" height="92" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="64" y="498" class="font box-title" fill="#1e3a8a">WebSocket 长连接</text>
+  <text x="64" y="518" class="mono box-sub" fill="#1e40af">im.message.receive_v1</text>
+  <text x="64" y="535" class="mono box-sub" fill="#1e40af">card.action.trigger</text>
+  <text x="64" y="552" class="mono box-sub" fill="#1e40af">drive.notice.comment</text>
+
+  <!-- Column 2: Agent OS Kernel -->
+  <rect x="292" y="88" width="440" height="498" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="308" y="112" class="font layer-label">AGENT OS KERNEL · 本地 Node.js 主进程</text>
+
+  <!-- IM Adapter Layer -->
+  <g filter="url(#shadow)">
+    <rect x="308" y="130" width="408" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+    <text x="324" y="154" class="font box-title">飞书接入与卡片层</text>
+    <text x="454" y="154" class="mono box-sub">src/im/lark.ts · card.ts · message-parser.ts</text>
+    <text x="324" y="176" class="font box-sub">多 Bot 实例管理 · 附件自动下载 · ThrottledCardUpdater 节流更新</text>
+  </g>
+
+  <!-- App Orchestration Layer -->
+  <g filter="url(#shadow)">
+    <rect x="308" y="210" width="408" height="148" rx="10" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1.2"/>
+    <text x="324" y="234" class="font box-title" fill="#312e81">应用编排层</text>
+    <text x="410" y="234" class="mono box-sub" fill="#4338ca">src/index.ts · src/app/*</text>
+
+    <rect x="322" y="248" width="184" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe"/>
+    <text x="332" y="266" class="font badge" fill="#1e293b">命令与卡片路由</text>
+    <text x="332" y="283" class="mono box-sub">command / card-action</text>
+
+    <rect x="518" y="248" width="184" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe"/>
+    <text x="528" y="266" class="font badge" fill="#1e293b">统一结果路由与续接</text>
+    <text x="528" y="283" class="mono box-sub">task-result / continuation</text>
+
+    <rect x="322" y="302" width="184" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe"/>
+    <text x="332" y="320" class="font badge" fill="#1e293b">多角色协作编排</text>
+    <text x="332" y="337" class="mono box-sub">collaboration-service</text>
+
+    <rect x="518" y="302" width="184" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe"/>
+    <text x="528" y="320" class="font badge" fill="#1e293b">目录切换与文档评论</text>
+    <text x="528" y="337" class="mono box-sub">cli-execution / comment</text>
+  </g>
+
+  <!-- Core State & Persistence -->
+  <g filter="url(#shadow)">
+    <rect x="308" y="376" width="218" height="190" rx="10" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1.2"/>
+    <text x="324" y="400" class="font box-title" fill="#065f46">领域状态与持久化</text>
+    <text x="324" y="418" class="mono box-sub" fill="#047857">src/core/* → data/*.json</text>
+    <text x="324" y="444" class="font box-sub">✅ 会话与目录 (sessions.json)</text>
+    <text x="324" y="465" class="font box-sub">✅ 审批状态 (approval-flows)</text>
+    <text x="324" y="486" class="font box-sub">✅ 产品方案 (product-spec)</text>
+    <text x="324" y="507" class="font box-sub">✅ 定时计划与日志 (schedules)</text>
+    <text x="324" y="532" class="font box-sub" fill="#b45309">⚡ 内存态：澄清 / 协作信箱</text>
+    <text x="324" y="551" class="font box-sub" fill="#b45309">⚡ 团队花名册 &amp; OS Skills</text>
+  </g>
+
+  <!-- Scheduler & Local API -->
+  <g filter="url(#shadow)">
+    <rect x="538" y="376" width="178" height="190" rx="10" fill="#fffbeb" stroke="#fde68a" stroke-width="1.2"/>
+    <text x="552" y="400" class="font box-title" fill="#92400e">定时调度与 API</text>
+    <text x="552" y="418" class="mono box-sub" fill="#b45309">scheduler / watcher</text>
+    <text x="552" y="446" class="font box-sub">• once / interval / cron</text>
+    <text x="552" y="467" class="font box-sub">• schedules.json 热加载</text>
+    <text x="552" y="488" class="font box-sub">• 目录快照与崩溃恢复</text>
+    <rect x="550" y="504" width="154" height="48" rx="7" fill="#ffffff" stroke="#fcd34d"/>
+    <text x="560" y="523" class="font badge" fill="#92400e">本地 HTTP 管理 API</text>
+    <text x="560" y="541" class="mono box-sub" fill="#b45309">127.0.0.1:3101</text>
+  </g>
+
+  <!-- Column 3: Execution Plane (CLI + MCP) -->
+  <rect x="778" y="88" width="270" height="498" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="794" y="112" class="font layer-label">EXECUTION PLANE · 子进程</text>
+
+  <g filter="url(#shadow)">
+    <rect x="794" y="130" width="238" height="128" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="810" y="156" class="font box-title">CLI 引擎驱动层</text>
+    <text x="810" y="174" class="mono box-sub">src/cli/runner.ts · *-adapter.ts</text>
+    <rect x="810" y="188" width="98" height="30" rx="6" fill="#eef2ff" stroke="#818cf8"/>
+    <text x="822" y="208" class="font badge" fill="#3730a3">Claude Code</text>
+    <rect x="918" y="188" width="98" height="30" rx="6" fill="#ecfdf5" stroke="#34d399"/>
+    <text x="945" y="208" class="font badge" fill="#065f46">Codex</text>
+    <text x="810" y="242" class="font box-sub">统一事件流 · /resume · /compact</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="794" y="284" width="238" height="162" rx="10" fill="#fff1f2" stroke="#fda4af" stroke-width="1.2"/>
+    <text x="810" y="308" class="font box-title" fill="#9f1239">内置 stdio MCP Server</text>
+    <text x="810" y="326" class="mono box-sub" fill="#be123c">src/mcp/app-tools-server.ts</text>
+    <text x="810" y="352" class="mono box-sub" fill="#881337">• select_workspace</text>
+    <text x="810" y="370" class="mono box-sub" fill="#881337">• request_clarification</text>
+    <text x="810" y="388" class="mono box-sub" fill="#881337">• request_spec_approval</text>
+    <text x="810" y="406" class="mono box-sub" fill="#881337">• request_approval</text>
+    <text x="810" y="424" class="mono box-sub" fill="#881337">• dispatch_task / schedule</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="794" y="472" width="238" height="94" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <text x="810" y="498" class="font box-title">目标项目工作区 &amp; Skills</text>
+    <text x="810" y="519" class="font box-sub">• 话题绑定目录 (workspaceDir)</text>
+    <text x="810" y="537" class="font box-sub">• 未绑定：data/scratch/&lt;sid&gt;</text>
+    <text x="810" y="555" class="font box-sub">• skills/*/SKILL.md &amp; lark-*</text>
+  </g>
+
+  <!-- Arrows -->
+  <!-- Feishu <-> Kernel -->
+  <line x1="247" y1="162" x2="306" y2="162" stroke="#2563eb" stroke-width="2.2" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)"/>
+  <text x="255" y="152" class="font arrow-label" fill="#1d4ed8">WS/REST</text>
+
+  <!-- Kernel -> CLI -->
+  <line x1="716" y1="194" x2="792" y2="194" stroke="#475569" stroke-width="2.2" marker-end="url(#arrow-slate)"/>
+  <text x="723" y="184" class="font arrow-label">spawn</text>
+
+  <!-- CLI -> Kernel (events / killCli intercept) -->
+  <line x1="792" y1="226" x2="716" y2="226" stroke="#475569" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-slate)"/>
+  <text x="722" y="243" class="font arrow-label">JSONL流</text>
+
+  <!-- CLI <-> MCP -->
+  <line x1="913" y1="258" x2="913" y2="282" stroke="#e11d48" stroke-width="2" marker-start="url(#arrow-slate)" marker-end="url(#arrow-slate)"/>
+  <text x="922" y="274" class="font arrow-label" fill="#be123c">stdio MCP</text>
+
+  <!-- MCP -> Local Schedule API -->
+  <path d="M 794 420 L 752 420 L 752 528 L 708 528" fill="none" stroke="#d97706" stroke-width="2.2" marker-end="url(#arrow-amber)"/>
+  <text x="723" y="480" class="font arrow-label" fill="#b45309">HTTP</text>
+  <text x="723" y="495" class="font arrow-label" fill="#b45309">POST</text>
+
+  <!-- CLI -> Workspace -->
+  <path d="M 1032 210 L 1056 210 L 1056 518 L 1034 518" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#arrow-emerald)"/>
+</svg>

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 520" width="1060" height="520" role="img" aria-label="斜杠命令分流、Prompt 拼装与 Skill 体系图">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+      .title { font-size: 19px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12.5px; fill: #64748b; }
+      .box-title { font-size: 13.5px; font-weight: 700; fill: #0f172a; }
+      .box-sub { font-size: 11.5px; fill: #475569; }
+      .pill { font-size: 11px; font-weight: 700; }
+    </style>
+    <filter id="sh7" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="ar7-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="ar7-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <rect width="1060" height="520" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1058" height="518" rx="15" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <text x="32" y="38" class="font title">消息命令分流 + 角色 Prompt 6 层拼装 + 两类 Skill 分界</text>
+  <text x="32" y="60" class="font sub">管理命令在 OS 层直接“拦截秒回”不消耗大模型；需要执行的任务经 buildBotPrompt() 装入完整角色上下文后交给 CLI</text>
+
+  <!-- Left: Slash Command Dispatch -->
+  <g filter="url(#sh7)">
+    <rect x="34" y="88" width="328" height="404" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <rect x="50" y="102" width="176" height="22" rx="6" fill="#eff6ff"/>
+    <text x="60" y="117" class="font pill" fill="#1d4ed8">① 斜杠命令分流器</text>
+    <text x="50" y="144" class="mono box-sub">command-handler.ts</text>
+
+    <rect x="50" y="160" width="296" height="148" rx="8" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="64" y="182" class="font pill" fill="#065f46">返回 "handled"（OS 直接回复，不启 CLI）</text>
+    <text x="64" y="204" class="mono box-sub">/help · /status · /team</text>
+    <text x="64" y="223" class="mono box-sub">/cd [目录] · /new · /close</text>
+    <text x="64" y="242" class="mono box-sub">/schedules · /schedule pause|resume|delete|run</text>
+    <text x="64" y="264" class="mono box-sub">/resume → 读本地原生会话发选择卡</text>
+    <text x="64" y="284" class="font box-sub">  • Claude: 扫 ~/.claude/projects/*.jsonl</text>
+    <text x="64" y="300" class="font box-sub">  • Codex: codex app-server JSON-RPC</text>
+
+    <rect x="50" y="324" width="296" height="150" rx="8" fill="#eef2ff" stroke="#c7d2fe"/>
+    <text x="64" y="346" class="font pill" fill="#3730a3">返回 "continue"（继续进入执行链路）</text>
+    <text x="64" y="370" class="font box-sub">• 普通对话 &amp; /claude / /codex 任务</text>
+    <text x="64" y="392" class="font box-sub">• /schedule &lt;自然语言&gt;：改写为调用</text>
+    <text x="64" y="410" class="mono box-sub">  schedule_manage(action=add)</text>
+    <text x="64" y="434" class="font box-sub">• /compact [要求]：走原生压缩分支</text>
+    <text x="64" y="454" class="mono box-sub">  native-compact.ts (保持 cliSessionId 不变)</text>
+  </g>
+
+  <!-- Center: 6-Layer Prompt Assembly -->
+  <g filter="url(#sh7)">
+    <rect x="404" y="88" width="326" height="404" rx="12" fill="#ffffff" stroke="#60a5fa" stroke-width="1.5"/>
+    <rect x="420" y="102" width="206" height="22" rx="6" fill="#dbeafe"/>
+    <text x="430" y="117" class="font pill" fill="#1e40af">② buildBotPrompt() 6 层拼装</text>
+    <text x="420" y="144" class="mono box-sub">src/core/bot-registry.ts:150-196</text>
+
+    <rect x="420" y="160" width="294" height="44" rx="7" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="432" y="179" class="font pill" fill="#1e3a8a">Layer 1 · 角色设定与 systemPrompt</text>
+    <text x="432" y="196" class="font box-sub">你是谁、负责什么、不能越界做什么</text>
+
+    <rect x="420" y="212" width="294" height="44" rx="7" fill="#eef2ff" stroke="#c7d2fe"/>
+    <text x="432" y="231" class="font pill" fill="#312e81">Layer 2 · 团队花名册 (teamRegistry)</text>
+    <text x="432" y="248" class="font box-sub">成员列表、Team Leader 与 dispatch_task 约束</text>
+
+    <rect x="420" y="264" width="294" height="44" rx="7" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="432" y="283" class="font pill" fill="#065f46">Layer 3 · 产品交付规则（按需注入）</text>
+    <text x="432" y="300" class="font box-sub">默认 lark-doc / local，要求调用 request_spec_approval</text>
+
+    <rect x="420" y="316" width="294" height="44" rx="7" fill="#fffbeb" stroke="#fde68a"/>
+    <text x="432" y="335" class="font pill" fill="#92400e">Layer 4 · Skill 加载规则与绝对路径</text>
+    <text x="432" y="352" class="font box-sub">OS 自有 Skill 绝对路径 + 外部 lark-* 说明</text>
+
+    <rect x="420" y="368" width="294" height="44" rx="7" fill="#fff1f2" stroke="#fecdd3"/>
+    <text x="432" y="387" class="font pill" fill="#9f1239">Layer 5 · 飞书输出规则</text>
+    <text x="432" y="404" class="font box-sub">≤1200 字、先结论、禁贴大代码、决策调澄清卡</text>
+
+    <rect x="420" y="420" width="294" height="54" rx="7" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="432" y="440" class="font pill" fill="#0f172a">Layer 6 · 当前任务 + 附件路径 + 目录约束</text>
+    <text x="432" y="459" class="font box-sub">外层 runCli 再包一层当前 workspaceDir 读写约束</text>
+  </g>
+
+  <!-- Right: Two Skill Categories -->
+  <g filter="url(#sh7)">
+    <rect x="768" y="88" width="258" height="194" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.4"/>
+    <rect x="784" y="102" width="164" height="22" rx="6" fill="#fef3c7"/>
+    <text x="794" y="117" class="font pill" fill="#92400e">OS 自有 Skill (非 lark-*)</text>
+    <text x="784" y="144" class="mono box-sub">skills/&lt;name&gt;/SKILL.md</text>
+    <text x="784" y="168" class="font box-sub">• 启动时强校验文件存在</text>
+    <text x="784" y="188" class="font box-sub">• 始终按 OS 绝对路径加载</text>
+    <text x="784" y="208" class="font box-sub">• 仓库自带 4 个核心工作流：</text>
+    <text x="784" y="230" class="mono box-sub" fill="#92400e">  grill-me · to-spec</text>
+    <text x="784" y="248" class="mono box-sub" fill="#92400e">  to-tickets · implement-ticket</text>
+    <text x="784" y="268" class="font box-sub">• 产物写入任务 workspaceDir</text>
+  </g>
+
+  <g filter="url(#sh7)">
+    <rect x="768" y="302" width="258" height="190" rx="12" fill="#ecfdf5" stroke="#34d399" stroke-width="1.4"/>
+    <rect x="784" y="316" width="176" height="22" rx="6" fill="#d1fae5"/>
+    <text x="794" y="331" class="font pill" fill="#065f46">外部飞书 Skill (lark-*)</text>
+    <text x="784" y="358" class="mono box-sub">isOsManagedSkill() === false</text>
+    <text x="784" y="384" class="font box-sub">• 由本机 Claude / Codex 环境中</text>
+    <text x="784" y="401" class="font box-sub">  安装的飞书 Skill 包提供</text>
+    <text x="784" y="424" class="font box-sub">• OS 不复制、不校验本地路径</text>
+    <text x="784" y="448" class="font box-sub" fill="#047857">• 特例：含 lark-drive 时自动</text>
+    <text x="784" y="466" class="font box-sub" fill="#047857">  订阅飞书云文档评论事件</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="362" y1="398" x2="402" y2="398" stroke="#2563eb" stroke-width="2.2" marker-end="url(#ar7-blue)"/>
+  <path d="M 768 185 L 748 185 L 748 338 L 716 338" fill="none" stroke="#d97706" stroke-width="1.8" stroke-dasharray="5,3"/>
+  <path d="M 768 398 L 748 398 L 748 338 L 716 338" fill="none" stroke="#059669" stroke-width="1.8" stroke-dasharray="5,3"/>
+</svg>

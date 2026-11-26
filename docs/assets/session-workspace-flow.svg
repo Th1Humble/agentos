@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 540" width="1060" height="540" role="img" aria-label="飞书话题会话与工作目录绑定流程图">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+      .title { font-size: 19px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12.5px; fill: #64748b; }
+      .box-title { font-size: 13.5px; font-weight: 700; fill: #0f172a; }
+      .box-sub { font-size: 11.5px; fill: #475569; }
+      .pill { font-size: 11px; font-weight: 700; }
+      .step { font-size: 11.5px; font-weight: 600; fill: #1e293b; }
+    </style>
+    <filter id="sh2" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="a-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="a-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <rect width="1060" height="540" rx="16" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1058" height="538" rx="15" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <text x="32" y="38" class="font title">话题会话隔离与工作目录绑定：为什么不会跨项目串味？</text>
+  <text x="32" y="60" class="font sub">核心原则：新话题默认不绑定目录 → 可先讨论 → 明确项目后全话题共享同一 workspaceDir，切目录必清旧 cliSessionId</text>
+
+  <!-- Top Row: Topic -> Session Key -> Status Machine -->
+  <g filter="url(#sh2)">
+    <rect x="34" y="88" width="246" height="122" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.4"/>
+    <rect x="48" y="100" width="118" height="20" rx="5" fill="#dbeafe"/>
+    <text x="56" y="114" class="font pill" fill="#1d4ed8">① 话题唯一键</text>
+    <text x="48" y="140" class="font box-title">一条飞书消息进来</text>
+    <text x="48" y="160" class="mono box-sub">threadId || rootId || msgId</text>
+    <text x="48" y="180" class="font box-sub">按 botId:chatId:threadId 映射</text>
+    <text x="48" y="198" class="font box-sub">不同角色各自存独立 cliSessionId</text>
+  </g>
+
+  <g filter="url(#sh2)">
+    <rect x="322" y="88" width="356" height="122" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <rect x="336" y="100" width="142" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="344" y="114" class="font pill" fill="#334155">② Session 生命周期</text>
+
+    <!-- States -->
+    <rect x="338" y="136" width="70" height="32" rx="7" fill="#fef3c7" stroke="#f59e0b"/>
+    <text x="373" y="156" text-anchor="middle" class="mono pill" fill="#92400e">creating</text>
+
+    <rect x="434" y="136" width="62" height="32" rx="7" fill="#dbeafe" stroke="#3b82f6"/>
+    <text x="465" y="156" text-anchor="middle" class="mono pill" fill="#1d4ed8">active</text>
+
+    <rect x="522" y="136" width="54" height="32" rx="7" fill="#d1fae5" stroke="#10b981"/>
+    <text x="549" y="156" text-anchor="middle" class="mono pill" fill="#065f46">idle</text>
+
+    <rect x="600" y="136" width="64" height="32" rx="7" fill="#fee2e2" stroke="#ef4444"/>
+    <text x="632" y="156" text-anchor="middle" class="mono pill" fill="#991b1b">closed</text>
+
+    <line x1="408" y1="152" x2="432" y2="152" stroke="#475569" stroke-width="1.8" marker-end="url(#a-slate)"/>
+    <line x1="496" y1="146" x2="520" y2="146" stroke="#475569" stroke-width="1.8" marker-end="url(#a-slate)"/>
+    <line x1="520" y1="159" x2="498" y2="159" stroke="#475569" stroke-width="1.8" marker-end="url(#a-slate)"/>
+    <line x1="576" y1="152" x2="598" y2="152" stroke="#475569" stroke-width="1.8" marker-end="url(#a-slate)"/>
+
+    <text x="338" y="192" class="font box-sub">active 期间：用户追问被拒；团队内部协作消息自动延迟 1s 排队重试</text>
+  </g>
+
+  <g filter="url(#sh2)">
+    <rect x="720" y="88" width="306" height="122" rx="12" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.4"/>
+    <rect x="734" y="100" width="166" height="20" rx="5" fill="#fef3c7"/>
+    <text x="742" y="114" class="font pill" fill="#92400e">③ 未绑定目录的默认状态</text>
+    <text x="734" y="140" class="font box-title">workspaceDir = ""（先聊需求）</text>
+    <text x="734" y="160" class="mono box-sub">cwd = data/scratch/&lt;sessionId&gt;</text>
+    <text x="734" y="180" class="font box-sub">• 自动注入提示：禁止读写项目与产出文件</text>
+    <text x="734" y="198" class="font box-sub">• 明确路径后才切换到真实项目目录</text>
+  </g>
+
+  <line x1="280" y1="149" x2="320" y2="149" stroke="#2563eb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <line x1="678" y1="149" x2="718" y2="149" stroke="#475569" stroke-width="2" marker-end="url(#a-slate)"/>
+
+  <!-- Bottom Section: Two Binding Paths -->
+  <rect x="34" y="236" width="992" height="278" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="54" y="264" class="font box-title">两种目录绑定 / 切换方式（最终都汇聚到 SessionManager.setWorkspaceDir）</text>
+
+  <!-- Path 1: Manual /cd -->
+  <g filter="url(#sh2)">
+    <rect x="54" y="284" width="368" height="92" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect x="68" y="295" width="144" height="20" rx="5" fill="#e2e8f0"/>
+    <text x="76" y="309" class="font pill" fill="#1e293b">方式 A · 用户手动 /cd</text>
+    <text x="68" y="334" class="mono box-title">/cd ~/Code/my-app</text>
+    <text x="68" y="354" class="font box-sub">command-handler.ts 校验目录存在（realpath 规范化）</text>
+    <text x="68" y="370" class="font box-sub">直接更新全话题目录，下一条任务在新目录建新会话</text>
+  </g>
+
+  <!-- Path 2: Auto select_workspace -->
+  <g filter="url(#sh2)">
+    <rect x="54" y="394" width="368" height="102" rx="10" fill="#eef2ff" stroke="#818cf8" stroke-width="1.2"/>
+    <rect x="68" y="405" width="214" height="20" rx="5" fill="#e0e7ff"/>
+    <text x="76" y="419" class="font pill" fill="#3730a3">方式 B · 对话中自动 select_workspace</text>
+    <text x="68" y="444" class="font box-title">“帮我看下 ~/Code/my-app 的报错”</text>
+    <text x="68" y="464" class="font box-sub">1. 模型调 select_workspace(path, create, handoff)</text>
+    <text x="68" y="482" class="font box-sub">2. runCli 立刻 killCli → executeCli 切目录后自动续跑</text>
+  </g>
+
+  <!-- Guard & Sync Box -->
+  <g filter="url(#sh2)">
+    <rect x="492" y="284" width="246" height="212" rx="10" fill="#ecfdf5" stroke="#34d399" stroke-width="1.4"/>
+    <text x="508" y="310" class="font box-title" fill="#065f46">切换时的 4 重安全保护</text>
+    <text x="508" y="336" class="font box-sub">1. 忙碌保护：同话题任意成员在</text>
+    <text x="508" y="353" class="font box-sub">   active / creating 禁止切换</text>
+    <text x="508" y="376" class="font box-sub">2. 流程保护：存在待审批 / 方案 /</text>
+    <text x="508" y="393" class="font box-sub">   澄清时禁止切换</text>
+    <text x="508" y="416" class="font box-sub">3. 同步重置：清空同话题全员的</text>
+    <text x="508" y="433" class="font box-sub">   cliSessionId 与上下文窗口缓存</text>
+    <text x="508" y="456" class="font box-sub">4. 文字交接：保留 ≤8000 字任务</text>
+    <text x="508" y="473" class="font box-sub">   描述 + handoff，防死循环(≤3次)</text>
+  </g>
+
+  <!-- Final Result Box -->
+  <g filter="url(#sh2)">
+    <rect x="786" y="284" width="220" height="212" rx="10" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.4"/>
+    <text x="802" y="310" class="font box-title" fill="#1e3a8a">全话题共享目录生效</text>
+    <text x="802" y="338" class="font box-sub">同一话题内所有角色：</text>
+    <rect x="802" y="352" width="188" height="28" rx="6" fill="#ffffff" stroke="#bfdbfe"/>
+    <text x="812" y="370" class="mono box-sub" fill="#1d4ed8">ceo-assistant → /my-app</text>
+    <rect x="802" y="388" width="188" height="28" rx="6" fill="#ffffff" stroke="#bfdbfe"/>
+    <text x="812" y="406" class="mono box-sub" fill="#1d4ed8">product       → /my-app</text>
+    <rect x="802" y="424" width="188" height="28" rx="6" fill="#ffffff" stroke="#bfdbfe"/>
+    <text x="812" y="442" class="mono box-sub" fill="#1d4ed8">developer     → /my-app</text>
+    <text x="802" y="476" class="font box-sub" fill="#047857">✅ 持久化至 data/sessions.json</text>
+  </g>
+
+  <!-- Arrows in bottom section -->
+  <path d="M 422 330 L 456 330 L 456 372 L 490 372" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a-slate)"/>
+  <path d="M 422 444 L 456 444 L 456 410 L 490 410" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <line x1="738" y1="390" x2="784" y2="390" stroke="#059669" stroke-width="2.2" marker-end="url(#a-emerald)"/>
+</svg>
